@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="bn" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VidStream - বাংলা ভিডিও প্ল্যাটফর্ম</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root{--bg:#0f0f0f;--bg2:#181818;--card:#272727;--hover:#3f3f3f;--red:#ff0000;--text:#f1f1f1;--muted:#aaa;--border:#393939;--blue:#3ea6ff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Tahoma,sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#555;border-radius:3px}
+a{text-decoration:none;color:inherit}
+
+/* NAVBAR */
+.top-nav{background:var(--bg);border-bottom:1px solid var(--border);padding:0 16px;height:56px;position:fixed;top:0;width:100%;z-index:1050;display:flex;align-items:center;gap:12px}
+.nav-logo{color:var(--red);font-weight:800;font-size:1.3rem;display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+.nav-logo i{font-size:1.7rem}
+.nav-search{max-width:560px;flex:1;margin:0 auto}
+.nav-search .input-group{border-radius:20px;overflow:hidden;border:1px solid var(--border)}
+.nav-search input{background:#121212;border:none;color:#fff;padding:7px 16px;font-size:.9rem}
+.nav-search input:focus{background:#121212;color:#fff;box-shadow:inset 0 0 0 1px var(--blue)}
+.nav-search .btn-search{background:var(--card);border:none;color:#fff;padding:7px 18px}
+.nav-right{display:flex;align-items:center;gap:4px}
+.icon-btn{color:var(--text);font-size:1.15rem;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;position:relative}
+.icon-btn:hover{background:var(--hover)}
+.notif-dot{position:absolute;top:4px;right:4px;background:var(--red);border-radius:50%;width:14px;height:14px;font-size:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+.user-avatar-btn{width:32px;height:32px;border-radius:50%;overflow:hidden;cursor:pointer;border:none;padding:0;background:var(--card)}
+.user-avatar-btn img{width:100%;height:100%;object-fit:cover}
+
+/* SIDEBAR */
+.side-nav{position:fixed;left:0;top:56px;width:220px;height:calc(100vh - 56px);background:var(--bg);overflow-y:auto;padding:8px 0;z-index:1040;transition:transform .25s ease}
+.side-nav.hide{transform:translateX(-220px)}
+.side-item{display:flex;align-items:center;gap:14px;padding:9px 20px;color:var(--text);cursor:pointer;font-size:.88rem;border-radius:10px;margin:1px 8px;transition:background .15s}
+.side-item:hover,.side-item.on{background:var(--hover)}
+.side-item i{font-size:1.15rem;width:22px;text-align:center}
+.side-divider{border-top:1px solid var(--border);margin:8px 14px}
+.side-label{padding:6px 20px;color:var(--muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+/* MAIN */
+.page-wrap{margin-left:220px;margin-top:56px;padding:20px;min-height:calc(100vh - 56px);transition:margin-left .25s ease}
+.page-wrap.full{margin-left:0}
+
+/* VIDEO CARD */
+.vid-card{cursor:pointer;margin-bottom:14px;transition:transform .15s}
+.vid-card:hover{transform:translateY(-2px)}
+.vid-card .thumb{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;position:relative;background:#1a1a1a}
+.vid-card .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.vid-card:hover .thumb img{transform:scale(1.03)}
+.vid-card .dur{position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.85);color:#fff;padding:2px 6px;border-radius:4px;font-size:.72rem;font-weight:500}
+.vid-card .info{display:flex;gap:10px;padding:10px 2px 0}
+.vid-card .av{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--card);cursor:pointer}
+.vid-card .av img{width:100%;height:100%;object-fit:cover}
+.vid-card .meta h3{font-size:.9rem;font-weight:500;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0}
+.vid-card .meta p{color:var(--muted);font-size:.78rem;margin:3px 0 0}
+
+/* WATCH */
+.watch-grid{display:grid;grid-template-columns:1fr 380px;gap:20px}
+.player-box{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}
+.player-box video,.player-box iframe{width:100%;height:100%;border:none}
+.vid-title{font-size:1.15rem;font-weight:600;margin:12px 0 8px}
+.act-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;background:var(--card);color:#fff;border:none;font-size:.85rem;cursor:pointer;transition:background .15s}
+.act-btn:hover{background:var(--hover)}
+.act-btn.lit{background:var(--blue);color:#000}
+.sub-btn{background:var(--red);font-weight:600;color:#fff}
+.sub-btn.done{background:var(--card);color:var(--text)}
+.ch-row{display:flex;align-items:center;gap:12px;padding:14px 0}
+.ch-av{width:44px;height:44px;border-radius:50%;overflow:hidden;background:var(--card);cursor:pointer;flex-shrink:0}
+.ch-av img{width:100%;height:100%;object-fit:cover}
+
+/* COMMENTS */
+.cmt-input{display:flex;gap:10px;margin:16px 0}
+.cmt-input img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.cmt-input input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--border);color:#fff;padding:6px 0;font-size:.9rem}
+.cmt-input input:focus{outline:none;border-color:#fff}
+.cmt-item{display:flex;gap:10px;margin-bottom:14px}
+.cmt-item .c-av{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--card);cursor:pointer}
+.cmt-item .c-av img{width:100%;height:100%;object-fit:cover}
+
+/* SUGGEST CARD */
+.sg-card{display:flex;gap:8px;margin-bottom:10px;cursor:pointer;padding:4px;border-radius:8px}
+.sg-card:hover{background:var(--hover)}
+.sg-card .sg-thumb{width:160px;min-width:160px;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:#1a1a1a}
+.sg-card .sg-thumb img{width:100%;height:100%;object-fit:cover}
+.sg-card .sg-meta h4{font-size:.82rem;font-weight:500;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sg-card .sg-meta p{font-size:.72rem;color:var(--muted);margin:3px 0 0}
+
+/* AUTH */
+.auth-box{max-width:420px;margin:50px auto;background:var(--card);border-radius:16px;padding:36px}
+.form-control,.form-select{background:#121212;border:1px solid var(--border);color:#fff}
+.form-control:focus,.form-select:focus{background:#121212;color:#fff;border-color:var(--blue);box-shadow:0 0 0 2px rgba(62,166,255,.15)}
+.btn-red{background:var(--red);color:#fff;border:none;font-weight:600;padding:10px 24px;border-radius:8px}
+.btn-red:hover{background:#d00;color:#fff}
+
+/* UPLOAD */
+.drop-zone{border:2px dashed var(--border);border-radius:16px;padding:50px 20px;text-align:center;cursor:pointer;transition:all .3s}
+.drop-zone:hover{border-color:var(--blue);background:rgba(62,166,255,.03)}
+.drop-zone i{font-size:3.5rem;color:var(--muted)}
+
+/* CHANNEL HEADER */
+.ch-header{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border-radius:16px;padding:28px;margin-bottom:20px;display:flex;align-items:center;gap:20px}
+.ch-header .big-av{width:90px;height:90px;border-radius:50%;overflow:hidden;border:3px solid var(--red);flex-shrink:0}
+.ch-header .big-av img{width:100%;height:100%;object-fit:cover}
+
+/* NOTIFICATION PANEL */
+.notif-box{position:fixed;top:56px;right:50px;width:370px;max-height:480px;overflow-y:auto;background:var(--card);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.6);z-index:1060;display:none}
+.notif-box.open{display:block}
+.notif-row{display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.notif-row:hover{background:var(--hover)}
+.notif-row.fresh{background:rgba(62,166,255,.06)}
+.notif-row img{width:44px;height:44px;border-radius:8px;object-fit:cover}
+
+/* CHIPS */
+.chip{display:inline-block;padding:5px 14px;border-radius:8px;background:var(--card);color:#fff;font-size:.82rem;cursor:pointer;border:none;margin:0 3px 6px;transition:all .15s}
+.chip:hover,.chip.on{background:#fff;color:#000}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty i{font-size:4rem;margin-bottom:12px;display:block}
+
+/* PROGRESS */
+.upload-progress{display:none;margin-top:14px}
+.upload-progress.show{display:block}
+
+/* TOAST */
+.toast-area{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999}
+
+/* ANIMATION */
+.fade-up{animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* RESPONSIVE */
+@media(max-width:1200px){.watch-grid{grid-template-columns:1fr}.sg-section{display:none}}
+@media(max-width:768px){
+  .side-nav{transform:translateX(-220px)}.side-nav.mob-show{transform:translateX(0)}
+  .page-wrap{margin-left:0!important}
+  .nav-search{display:none!important}
+  .ch-header{flex-direction:column;text-align:center}
+  .sg-card .sg-thumb{width:120px;min-width:120px}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav class="top-nav">
+  <div class="d-flex align-items-center gap-2">
+    <button class="icon-btn" onclick="toggleSide()"><i class="bi bi-list"></i></button>
+    <div class="nav-logo" onclick="go('home')"><i class="bi bi-play-btn-fill"></i><span class="d-none d-sm-inline">VidStream</span></div>
+  </div>
+  <div class="nav-search d-none d-md-block">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="ভিডিও সার্চ করুন..." id="qInput" onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="btn-search" onclick="doSearch()"><i class="bi bi-search"></i></button>
+    </div>
+  </div>
+  <div class="nav-right" id="navRight"></div>
+</nav>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="side-nav" id="sideNav"></aside>
+
+<!-- ==================== MAIN ==================== -->
+<main class="page-wrap" id="page"></main>
+
+<!-- ==================== NOTIFICATION PANEL ==================== -->
+<div class="notif-box" id="notifBox"></div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast-area" id="toastArea"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ======================== CONFIG ========================
+const CFG = {
+  botToken: '8674102395:AAFGEsPilEDOlZWrblNjf2f2lJk2UDevGow',
+  channelId: '-1003799865873',
+  tgApi: 'https://api.telegram.org'
+};
+
+// ======================== DATABASE (localStorage) ========================
+const DB = {
+  g(k){ try{return JSON.parse(localStorage.getItem('vs_'+k))}catch{return null} },
+  s(k,v){ localStorage.setItem('vs_'+k, JSON.stringify(v)) },
+  init(){
+    if(!this.g('users')) this.s('users',[]);
+    if(!this.g('videos')) this.s('videos',[]);
+    if(!this.g('comments')) this.s('comments',[]);
+    if(!this.g('likes')) this.s('likes',[]);
+    if(!this.g('subs')) this.s('subs',[]);
+    if(!this.g('notifs')) this.s('notifs',[]);
+    if(!this.g('seeded')) this.seed();
+  },
+  seed(){
+    const users = [
+      {id:'u1',name:'টেক বাংলা',email:'tech@gmail.com',pass:'123456',avatar:'https://ui-avatars.com/api/?name=Tech+Bangla&background=ff0000&color=fff&size=150&bold=true',subs:15200,joined:Date.now()-86400000*30},
+      {id:'u2',name:'ক্রিয়েটিভ স্টুডিও',email:'creative@gmail.com',pass:'123456',avatar:'https://ui-avatars.com/api/?name=Creative+Studio&background=1a73e8&color=fff&size=150&bold=true',subs:8400,joined:Date.now()-86400000*60},
+      {id:'u3',name:'গেমিং জোন BD',email:'gaming@gmail.com',pass:'123456',avatar:'https://ui-avatars.com/api/?name=Gaming+Zone&background=ff6600&color=fff&size=150&bold=true',subs:22000,joined:Date.now()-86400000*90}
+    ];
+    const videos = [
+      {id:'v1',uid:'u1',title:'বাংলায় ওয়েব ডেভেলপমেন্ট শিখুন - সম্পূর্ণ কোর্স ২০২৫',desc:'এই ভিডিওতে আমরা HTML, CSS, JavaScript এবং PHP শিখব। সম্পূর্ণ ফ্রি কোর্স বাংলায়।',thumb:'https://img.youtube.com/vi/pN6jk0uUrfo/maxresdefault.jpg',dur:'45:20',views:125340,tgFileId:'',tgMsgId:'',cat:'education',at:Date.now()-86400000*5},
+      {id:'v2',uid:'u2',title:'ফটোশপ বাংলা টিউটোরিয়াল - প্রো লেভেল এডিটিং',desc:'ফটোশপে প্রফেশনাল ফটো এডিটিং শিখুন বাংলায়।',thumb:'https://img.youtube.com/vi/IyR_uYsRdPs/maxresdefault.jpg',dur:'32:15',views:89200,tgFileId:'',tgMsgId:'',cat:'education',at:Date.now()-86400000*3},
+      {id:'v3',uid:'u3',title:'GTA 6 গেমপ্লে - বাংলা রিভিউ ২০২৫',desc:'GTA 6 এর সম্পূর্ণ বাংলা রিভিউ এবং গেমপ্লে দেখুন।',thumb:'https://img.youtube.com/vi/QdBZY2fkU-0/maxresdefault.jpg',dur:'28:45',views:341000,tgFileId:'',tgMsgId:'',cat:'gaming',at:Date.now()-86400000*1},
+      {id:'v4',uid:'u1',title:'React.js বাংলা টিউটোরিয়াল - বিগিনার থেকে এক্সপার্ট',desc:'React.js শিখুন বাংলায়, জিরো থেকে হিরো পর্যন্ত।',thumb:'https://img.youtube.com/vi/bMknfKXIFA8/maxresdefault.jpg',dur:'1:20:30',views:67400,tgFileId:'',tgMsgId:'',cat:'education',at:Date.now()-86400000*7},
+      {id:'v5',uid:'u2',title:'After Effects মোশন গ্রাফিক্স - বাংলা কোর্স',desc:'After Effects দিয়ে প্রফেশনাল মোশন গ্রাফিক্স বানান।',thumb:'https://img.youtube.com/vi/eDJDGMnU27c/maxresdefault.jpg',dur:'55:00',views:45800,tgFileId:'',tgMsgId:'',cat:'entertainment',at:Date.now()-86400000*10},
+      {id:'v6',uid:'u3',title:'মাইনক্রাফট বাংলা - সার্ভাইভাল সিরিজ EP-1',desc:'মাইনক্রাফট সার্ভাইভাল সিরিজ বাংলায়!',thumb:'https://img.youtube.com/vi/MmB9b5njVbA/maxresdefault.jpg',dur:'22:10',views:156700,tgFileId:'',tgMsgId:'',cat:'gaming',at:Date.now()-86400000*2},
+      {id:'v7',uid:'u1',title:'Python দিয়ে AI প্রজেক্ট - বাংলা টিউটোরিয়াল',desc:'Python দিয়ে আর্টিফিশিয়াল ইন্টেলিজেন্স প্রজেক্ট বানান।',thumb:'https://img.youtube.com/vi/x7X9w_GIm1s/maxresdefault.jpg',dur:'1:05:45',views:98200,tgFileId:'',tgMsgId:'',cat:'tech',at:Date.now()-86400000*4},
+      {id:'v8',uid:'u2',title:'বাংলা গান Cover - আমার সোনার বাংলা',desc:'আমার সোনার বাংলা গানের কভার ভার্সন।',thumb:'https://img.youtube.com/vi/sHeAGwNqkwM/maxresdefault.jpg',dur:'4:30',views:234000,tgFileId:'',tgMsgId:'',cat:'music',at:Date.now()-86400000*8}
+    ];
+    const comments = [
+      {id:'c1',vid:'v1',uid:'u2',text:'অসাধারণ ভিডিও! অনেক কিছু শিখলাম 🔥',at:Date.now()-86400000*4},
+      {id:'c2',vid:'v1',uid:'u3',text:'ভাই আরো ভিডিও দেন প্লিজ!',at:Date.now()-86400000*3},
+      {id:'c3',vid:'v3',uid:'u1',text:'GTA 6 খেলতে পারছি না কিন্তু দেখে মজা পাচ্ছি! 😂',at:Date.now()-86400000*0.5},
+      {id:'c4',vid:'v7',uid:'u3',text:'AI নিয়ে আরো ভিডিও চাই!',at:Date.now()-86400000*2},
+      {id:'c5',vid:'v8',uid:'u1',text:'গলা অসাধারণ ভাই! ❤️',at:Date.now()-86400000*6}
+    ];
+    this.s('users',users);this.s('videos',videos);this.s('comments',comments);this.s('seeded',true);
+  }
+};
+
+// ======================== STATE ========================
+let me = DB.g('me'); // current user
+let curPage = 'home';
+let sideOpen = innerWidth > 768;
+
+// ======================== AUTH ========================
+function register(name,email,pass){
+  if(!email.endsWith('@gmail.com')) return toast('শুধুমাত্র Gmail ব্যবহার করুন!','danger');
+  if(pass.length<6) return toast('পাসওয়ার্ড মিনিমাম ৬ অক্ষর!','danger');
+  const users = DB.g('users');
+  if(users.find(u=>u.email===email)) return toast('এই ইমেইল আগে থেকে আছে!','danger');
+  const u = {
+    id:'u_'+Date.now(), name, email, pass,
+    avatar:`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}&color=fff&size=150&bold=true`,
+    subs:0, joined:Date.now()
+  };
+  users.push(u); DB.s('users',users);
+  me=u; DB.s('me',u);
+  toast('স্বাগতম '+name+'! 🎉','success');
+  go('home');
+}
+function login(email,pass){
+  const u = DB.g('users').find(x=>x.email===email&&x.pass===pass);
+  if(!u) return toast('ইমেইল বা পাসওয়ার্ড ভুল!','danger');
+  me=u; DB.s('me',u);
+  toast('স্বাগতম '+u.name+'!','success');
+  go('home');
+}
+function logout(){
+  me=null; DB.s('me',null);
+  toast('লগআউট সফল','info');
+  go('home');
+}
+
+// ======================== TELEGRAM UPLOAD ========================
+async function telegramUpload(file, title, desc, thumbUrl, cat){
+  if(!me) return toast('প্রথমে লগইন করুন!','danger');
+
+  const pBar = document.getElementById('pBar');
+  const pWrap = document.getElementById('pWrap');
+  const pText = document.getElementById('pText');
+  if(pWrap) pWrap.classList.add('show');
+  if(pBar) pBar.style.width='5%';
+  if(pText) pText.textContent='টেলিগ্রামে আপলোড হচ্ছে...';
+
+  let tgFileId='', tgMsgId='';
+
+  // Upload to Telegram
+  if(file && file.size > 0){
+    try{
+      const fd = new FormData();
+      fd.append('chat_id', CFG.channelId);
+      fd.append('video', file);
+      fd.append('caption', '📹 '+title+'\n\n'+desc);
+      fd.append('parse_mode','HTML');
+
+      if(pBar) pBar.style.width='15%';
+      if(pText) pText.textContent='ভিডিও পাঠানো হচ্ছে... ('+((file.size/1024/1024).toFixed(1))+' MB)';
+
+      const xhr = new XMLHttpRequest();
+      const resp = await new Promise((resolve, reject) => {
+        xhr.upload.onprogress = (e) => {
+          if(e.lengthComputable && pBar){
+            const pct = 15 + (e.loaded/e.total)*70;
+            pBar.style.width = pct+'%';
+            pText.textContent = 'আপলোড হচ্ছে... '+Math.round(e.loaded/e.total*100)+'%';
+          }
+        };
+        xhr.onload = () => resolve(JSON.parse(xhr.responseText));
+        xhr.onerror = () => reject(new Error('Upload failed'));
+        xhr.open('POST', CFG.tgApi+'/bot'+CFG.botToken+'/sendVideo');
+        xhr.send(fd);
+      });
+
+      if(pBar) pBar.style.width='88%';
+
+      if(resp.ok && resp.result){
+        tgMsgId = resp.result.message_id;
+        if(resp.result.video) tgFileId = resp.result.video.file_id;
+        else if(resp.result.document) tgFileId = resp.result.document.file_id;
+        if(pText) pText.textContent='টেলিগ্রামে সেভ হয়েছে ✓';
+      } else {
+        console.warn('Telegram response:', resp);
+        toast('টেলিগ্রাম আপলোড সমস্যা: '+(resp.description||'Unknown'),'warning');
+      }
+    }catch(e){
+      console.error('TG Upload Error:', e);
+      toast('টেলিগ্রাম আপলোডে সমস্যা হয়েছে','warning');
+    }
+  }
+
+  if(pBar) pBar.style.width='95%';
+
+  // Save to DB
+  const vid = {
+    id:'v_'+Date.now(),
+    uid: me.id,
+    title: title,
+    desc: desc,
+    thumb: thumbUrl || 'https://placehold.co/640x360/272727/fff?text='+encodeURIComponent(title.substring(0,15)),
+    dur: file ? guessDur(file.size) : '0:00',
+    views: 0,
+    tgFileId: tgFileId,
+    tgMsgId: tgMsgId,
+    cat: cat || 'other',
+    at: Date.now()
+  };
+  const vids = DB.g('videos');
+  vids.unshift(vid);
+  DB.s('videos', vids);
+
+  // Notify subscribers
+  const mySubs = DB.g('subs').filter(s=>s.chId===me.id && s.bell);
+  if(mySubs.length){
+    const notifs = DB.g('notifs');
+    mySubs.forEach(s=>{
+      notifs.unshift({
+        id:'n_'+Date.now()+'_'+s.uid,
+        uid:s.uid, type:'video', from:me.id, vid:vid.id,
+        msg: me.name+' নতুন ভিডিও আপলোড করেছে: "'+title+'"',
+        img:vid.thumb, read:false, at:Date.now()
+      });
+    });
+    DB.s('notifs', notifs);
+  }
+
+  if(pBar) pBar.style.width='100%';
+  if(pText) pText.textContent='আপলোড সম্পন্ন! ✅';
+
+  setTimeout(()=>{
+    toast('ভিডিও সফলভাবে আপলোড হয়েছে! 🎉','success');
+    go('watch',{v:vid.id});
+  },600);
+}
+
+function getStreamUrl(video){
+  if(video.tgFileId){
+    // Build Telegram file URL via getFile API
+    return {type:'telegram', fileId: video.tgFileId};
+  }
+  // Fallback demo video
+  return {type:'direct', url:'https://www.w3schools.com/html/mov_bbb.mp4'};
+}
+
+async function loadTgVideo(fileId, videoEl){
+  try{
+    const r = await fetch(CFG.tgApi+'/bot'+CFG.botToken+'/getFile?file_id='+fileId);
+    const d = await r.json();
+    if(d.ok && d.result.file_path){
+      videoEl.src = CFG.tgApi+'/file/bot'+CFG.botToken+'/'+d.result.file_path;
+      videoEl.load();
+    } else {
+      toast('ভিডিও লোড করা যায়নি','danger');
+    }
+  }catch(e){
+    console.error('Stream error:', e);
+    toast('ভিডিও স্ট্রিম সমস্যা','danger');
+  }
+}
+
+// ======================== SOCIAL ========================
+function doLike(vid, type){
+  if(!me) return toast('লগইন করুন!','warning');
+  let likes = DB.g('likes');
+  const idx = likes.findIndex(l=>l.vid===vid && l.uid===me.id);
+  if(idx>=0){
+    if(likes[idx].type===type) likes.splice(idx,1);
+    else likes[idx].type=type;
+  } else {
+    likes.push({vid,uid:me.id,type,at:Date.now()});
+  }
+  DB.s('likes',likes);
+  renderActions(vid);
+}
+
+function postComment(vid,text){
+  if(!me) return toast('লগইন করুন!','warning');
+  if(!text.trim()) return;
+  const cmts = DB.g('comments');
+  cmts.unshift({id:'c_'+Date.now(),vid,uid:me.id,text:text.trim(),at:Date.now()});
+  DB.s('comments',cmts);
+
+  // Notify video owner
+  const video = DB.g('videos').find(v=>v.id===vid);
+  if(video && video.uid!==me.id){
+    const notifs = DB.g('notifs');
+    notifs.unshift({
+      id:'n_'+Date.now(), uid:video.uid, type:'comment', from:me.id, vid:vid,
+      msg: me.name+' কমেন্ট করেছে: "'+text.substring(0,50)+'"',
+      img:video.thumb, read:false, at:Date.now()
+    });
+    DB.s('notifs',notifs);
+  }
+  renderComments(vid);
+}
+
+function toggleSub(chId){
+  if(!me) return toast('লগইন করুন!','warning');
+  if(chId===me.id) return toast('নিজেকে সাবস্ক্রাইব করা যায় না!','info');
+  let subs = DB.g('subs');
+  const users = DB.g('users');
+  const idx = subs.findIndex(s=>s.uid===me.id && s.chId===chId);
+  const chIdx = users.findIndex(u=>u.id===chId);
+
+  if(idx>=0){
+    subs.splice(idx,1);
+    if(chIdx>=0) users[chIdx].subs = Math.max(0,(users[chIdx].subs||0)-1);
+    toast('আনসাবস্ক্রাইব হয়েছে','info');
+  } else {
+    subs.push({uid:me.id, chId, bell:true, at:Date.now()});
+    if(chIdx>=0) users[chIdx].subs = (users[chIdx].subs||0)+1;
+    toast('সাবস্ক্রাইব হয়েছে! 🔔','success');
+    // Notify channel
+    const notifs = DB.g('notifs');
+    notifs.unshift({
+      id:'n_'+Date.now(), uid:chId, type:'sub', from:me.id,
+      msg: me.name+' আপনার চ্যানেল সাবস্ক্রাইব করেছে!',
+      img:me.avatar, read:false, at:Date.now()
+    });
+    DB.s('notifs',notifs);
+  }
+  DB.s('subs',subs); DB.s('users',users);
+  syncMe();
+}
+
+function toggleBell(chId){
+  if(!me) return;
+  let subs = DB.g('subs');
+  const s = subs.find(x=>x.uid===me.id && x.chId===chId);
+  if(s){ s.bell=!s.bell; DB.s('subs',subs); toast(s.bell?'নোটিফিকেশন চালু 🔔':'নোটিফিকেশন বন্ধ 🔕','info'); }
+}
+
+function isSub(chId){ return me ? DB.g('subs').some(s=>s.uid===me.id && s.chId===chId) : false; }
+function bellOn(chId){ if(!me) return false; const s=DB.g('subs').find(x=>x.uid===me.id && x.chId===chId); return s?s.bell:false; }
+
+function addView(vid){
+  const vids = DB.g('videos');
+  const v = vids.find(x=>x.id===vid);
+  if(v){ v.views=(v.views||0)+1; DB.s('videos',vids); }
+}
+
+function syncMe(){
+  if(!me) return;
+  const u = DB.g('users').find(x=>x.id===me.id);
+  if(u){ me=u; DB.s('me',u); }
+}
+
+// ======================== HELPERS ========================
+function getUser(id){ return DB.g('users').find(u=>u.id===id)||{name:'Unknown',avatar:'https://ui-avatars.com/api/?name=U&size=128',subs:0}; }
+function fmtViews(n){ if(!n)return'0'; if(n>=1e6)return(n/1e6).toFixed(1)+'M'; if(n>=1e3)return(n/1e3).toFixed(1)+'K'; return n.toString(); }
+function guessDur(bytes){ const s=Math.floor(bytes/50000); const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60; return h?h+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0') : m+':'+String(sec).padStart(2,'0'); }
+function timeAgo(ts){
+  const d=Date.now()-ts; const m=Math.floor(d/60000),h=Math.floor(d/3600000),dy=Math.floor(d/86400000),mo=Math.floor(dy/30),y=Math.floor(dy/365);
+  if(y)return y+' বছর আগে'; if(mo)return mo+' মাস আগে'; if(dy)return dy+' দিন আগে'; if(h)return h+' ঘণ্টা আগে'; if(m)return m+' মিনিট আগে'; return 'এইমাত্র';
+}
+function toast(msg,type='info'){
+  const a=document.getElementById('toastArea');
+  const d=document.createElement('div');
+  d.className=`alert alert-${type} alert-dismissible fade show shadow-lg`;
+  d.style.cssText='min-width:280px;margin-bottom:6px;font-size:.9rem';
+  d.innerHTML=msg+`<button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>`;
+  a.appendChild(d); setTimeout(()=>d.remove(),4000);
+}
+function escHtml(t){ const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+
+// ======================== NAVIGATION ========================
+function go(page, params={}){
+  curPage=page;
+  window.scrollTo(0,0);
+  document.getElementById('notifBox').classList.remove('open');
+  buildNav(); buildSide();
+  const pg = document.getElementById('page');
+  pg.className = 'page-wrap'+(sideOpen?'':' full');
+
+  switch(page){
+    case 'home': pgHome(); break;
+    case 'trending': pgTrending(); break;
+    case 'watch': pgWatch(params.v); break;
+    case 'channel': pgChannel(params.id); break;
+    case 'upload': pgUpload(); break;
+    case 'login': pgLogin(); break;
+    case 'register': pgRegister(); break;
+    case 'search': pgSearch(params.q); break;
+    case 'mysubs': pgMySubs(); break;
+    case 'studio': pgStudio(); break;
+    case 'notifs': pgNotifs(); break;
+    default: pgHome();
+  }
+}
+
+function toggleSide(){
+  sideOpen=!sideOpen;
+  document.getElementById('sideNav').classList.toggle('hide',!sideOpen);
+  document.getElementById('page').classList.toggle('full',!sideOpen);
+}
+
+function doSearch(){
+  const q=document.getElementById('qInput').value.trim();
+  if(q) go('search',{q});
+}
+
+// ======================== NAVBAR BUILD ========================
+function buildNav(){
+  const nr = document.getElementById('navRight');
+  if(me){
+    const unread = DB.g('notifs').filter(n=>n.uid===me.id && !n.read).length;
+    nr.innerHTML=`
+      <button class="icon-btn d-md-none" onclick="document.querySelector('.nav-search').classList.toggle('d-none')"><i class="bi bi-search"></i></button>
+      <button class="icon-btn" onclick="go('upload')" title="আপলোড"><i class="bi bi-plus-circle"></i></button>
+      <button class="icon-btn" onclick="openNotifs()" title="নোটিফিকেশন">
+        <i class="bi bi-bell"></i>${unread?`<span class="notif-dot">${unread>9?'9+':unread}</span>`:''}
+      </button>
+      <div class="dropdown">
+        <button class="user-avatar-btn" data-bs-toggle="dropdown"><img src="${me.avatar}" alt=""></button>
+        <ul class="dropdown-menu dropdown-menu-end" style="background:var(--card);border-color:var(--border);min-width:220px">
+          <li><div class="px-3 py-2" style="border-bottom:1px solid var(--border)"><strong>${me.name}</strong><br><small style="color:var(--muted)">${me.email}</small></div></li>
+          <li><a class="dropdown-item text-white py-2" href="#" onclick="go('channel',{id:me.id})"><i class="bi bi-person me-2"></i>আমার চ্যানেল</a></li>
+          <li><a class="dropdown-item text-white py-2" href="#" onclick="go('studio')"><i class="bi bi-camera-video me-2"></i>স্টুডিও</a></li>
+          <li><a class="dropdown-item text-white py-2" href="#" onclick="go('notifs')"><i class="bi bi-bell me-2"></i>নোটিফিকেশন</a></li>
+          <li><hr class="dropdown-divider" style="border-color:var(--border)"></li>
+          <li><a class="dropdown-item text-white py-2" href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i>লগআউট</a></li>
+        </ul>
+      </div>`;
+  } else {
+    nr.innerHTML=`
+      <button class="icon-btn d-md-none" onclick="document.querySelector('.nav-search').classList.toggle('d-none')"><i class="bi bi-search"></i></button>
+      <button class="btn btn-outline-primary rounded-pill px-3 py-1" onclick="go('login')"><i class="bi bi-person-circle me-1"></i>সাইন ইন</button>`;
+  }
+}
+
+// ======================== NOTIF PANEL ========================
+function openNotifs(){
+  const box = document.getElementById('notifBox');
+  box.classList.toggle('open');
+  if(!box.classList.contains('open')) return;
+  const notifs = DB.g('notifs').filter(n=>n.uid===me.id).slice(0,20);
+  box.innerHTML = `<div class="p-3 d-flex justify-content-between align-items-center" style="border-bottom:1px solid var(--border)">
+    <strong>নোটিফিকেশন</strong>
+    <button class="btn btn-sm text-muted" onclick="markAllRead()">সব পড়া হয়েছে</button>
+  </div>` + (notifs.length ? notifs.map(n=>`
+    <div class="notif-row ${n.read?'':'fresh'}" onclick="clickNotif('${n.id}','${n.vid||''}')">
+      <img src="${n.img||'https://placehold.co/48/272727/fff?text=N'}" alt="">
+      <div><p class="mb-1" style="font-size:.83rem">${n.msg}</p><small style="color:var(--muted)">${timeAgo(n.at)}</small></div>
+    </div>`).join('') : '<div class="p-4 text-center" style="color:var(--muted)"><i class="bi bi-bell-slash" style="font-size:2rem"></i><p class="mt-2">কোন নোটিফিকেশন নেই</p></div>');
+}
+
+function clickNotif(nid,vid){
+  let notifs=DB.g('notifs'); const n=notifs.find(x=>x.id===nid);
+  if(n){n.read=true; DB.s('notifs',notifs);}
+  document.getElementById('notifBox').classList.remove('open');
+  if(vid) go('watch',{v:vid}); else buildNav();
+}
+function markAllRead(){
+  let notifs=DB.g('notifs');
+  notifs.forEach(n=>{ if(me&&n.uid===me.id) n.read=true; });
+  DB.s('notifs',notifs); buildNav(); openNotifs();
+}
+
+// ======================== SIDEBAR BUILD ========================
+function buildSide(){
+  const sb = document.getElementById('sideNav');
+  const mySubs = me ? DB.g('subs').filter(s=>s.uid===me.id) : [];
+
+  sb.innerHTML=`
+    <div class="side-item ${curPage==='home'?'on':''}" onclick="go('home')"><i class="bi bi-house-door-fill"></i> হোম</div>
+    <div class="side-item ${curPage==='trending'?'on':''}" onclick="go('trending')"><i class="bi bi-fire"></i> ট্রেন্ডিং</div>
+    <div class="side-item ${curPage==='mysubs'?'on':''}" onclick="go('mysubs')"><i class="bi bi-collection-play"></i> সাবস্ক্রিপশন</div>
+    <div class="side-divider"></div>
+    ${me?`
+      <div class="side-item ${curPage==='studio'?'on':''}" onclick="go('studio')"><i class="bi bi-speedometer2"></i> স্টুডিও</div>
+      <div class="side-item ${curPage==='channel'?'on':''}" onclick="go('channel',{id:me.id})"><i class="bi bi-person-video3"></i> আমার চ্যানেল</div>
+      <div class="side-item ${curPage==='upload'?'on':''}" onclick="go('upload')"><i class="bi bi-cloud-arrow-up"></i> আপলোড</div>
+      <div class="side-item ${curPage==='notifs'?'on':''}" onclick="go('notifs')"><i class="bi bi-bell"></i> নোটিফিকেশন</div>
+    `:''}
+    ${mySubs.length?`
+      <div class="side-divider"></div>
+      <div class="side-label">সাবস্ক্রিপশন</div>
+      ${mySubs.map(s=>{const ch=getUser(s.chId); return `<div class="side-item" onclick="go('channel',{id:'${s.chId}'})"><img src="${ch.avatar}" width="22" height="22" style="border-radius:50%"> ${ch.name}</div>`;}).join('')}
+    `:''}
+    <div class="side-divider"></div>
+    <div class="px-3 py-3" style="font-size:.68rem;color:var(--muted);line-height:1.6">
+      <div class="mb-1">© ${new Date().getFullYear()} VidStream</div>
+      <div>Telegram Cloud Storage</div>
+      <div class="mt-1">Bot: <span style="color:var(--blue)">Connected ✓</span></div>
+    </div>`;
+
+  sb.classList.toggle('hide',!sideOpen);
+}
+
+// ======================== VIDEO CARD ========================
+function vCard(v){
+  const u=getUser(v.uid);
+  return `<div class="vid-card fade-up" onclick="go('watch',{v:'${v.id}'})">
+    <div class="thumb">
+      <img src="${v.thumb}" alt="${escHtml(v.title)}" loading="lazy" onerror="this.src='https://placehold.co/640x360/272727/fff?text=Video'">
+      <span class="dur">${v.dur}</span>
+    </div>
+    <div class="info">
+      <div class="av" onclick="event.stopPropagation();go('channel',{id:'${v.uid}'})"><img src="${u.avatar}" alt=""></div>
+      <div class="meta">
+        <h3>${escHtml(v.title)}</h3>
+        <p onclick="event.stopPropagation();go('channel',{id:'${v.uid}'})" style="cursor:pointer">${u.name}</p>
+        <p>${fmtViews(v.views)} ভিউ • ${timeAgo(v.at)}</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ======================== PAGE: HOME ========================
+function pgHome(){
+  const vids=DB.g('videos');
+  const cats = [
+    {k:'all',l:'সব'},{k:'education',l:'শিক্ষা'},{k:'gaming',l:'গেমিং'},{k:'music',l:'মিউজিক'},
+    {k:'entertainment',l:'বিনোদন'},{k:'tech',l:'টেক'},{k:'other',l:'অন্যান্য'}
+  ];
+  document.getElementById('page').innerHTML=`
+    <div class="mb-3 d-flex flex-wrap">${cats.map((c,i)=>`<button class="chip ${i===0?'on':''}" onclick="filterCat('${c.k}',this)">${c.l}</button>`).join('')}</div>
+    <div class="row g-3" id="vGrid">
+      ${vids.length ? vids.map(v=>`<div class="col-12 col-sm-6 col-md-4 col-lg-3">${vCard(v)}</div>`).join('') :
+      '<div class="empty col-12"><i class="bi bi-camera-video"></i><h4>কোন ভিডিও নেই</h4><p>প্রথম ভিডিও আপলোড করুন!</p></div>'}
+    </div>`;
+}
+function filterCat(cat,btn){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on')); btn.classList.add('on');
+  const vids = cat==='all' ? DB.g('videos') : DB.g('videos').filter(v=>v.cat===cat);
+  document.getElementById('vGrid').innerHTML = vids.length ?
+    vids.map(v=>`<div class="col-12 col-sm-6 col-md-4 col-lg-3">${vCard(v)}</div>`).join('') :
+    '<div class="empty col-12"><i class="bi bi-inbox"></i><h5>এই ক্যাটাগরিতে কোন ভিডিও নেই</h5></div>';
+}
+
+// ======================== PAGE: TRENDING ========================
+function pgTrending(){
+  const vids=[...DB.g('videos')].sort((a,b)=>(b.views||0)-(a.views||0));
+  document.getElementById('page').innerHTML=`
+    <h5 class="mb-4"><i class="bi bi-fire text-danger me-2"></i>ট্রেন্ডিং ভিডিও</h5>
+    <div class="row g-3">${vids.map(v=>`<div class="col-12 col-sm-6 col-md-4 col-lg-3">${vCard(v)}</div>`).join('')}</div>`;
+}
+
+// ======================== PAGE: WATCH ========================
+function pgWatch(vid){
+  const vids=DB.g('videos');
+  const v=vids.find(x=>x.id===vid);
+  if(!v) return go('home');
+  addView(vid);
+  const u=getUser(v.uid);
+  const suggested=vids.filter(x=>x.id!==vid).slice(0,10);
+  const stream = getStreamUrl(v);
+
+  document.getElementById('page').innerHTML=`
+    <div class="watch-grid">
+      <div>
+        <div class="player-box">
+          <video controls autoplay poster="${v.thumb}" id="mainPlayer">
+            ${stream.type==='direct'?`<source src="${stream.url}" type="video/mp4">`:''}
+            ভিডিও সাপোর্ট করে না।
+          </video>
+        </div>
+        <h1 class="vid-title">${escHtml(v.title)}</h1>
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+          <div class="ch-row">
+            <div class="ch-av" onclick="go('channel',{id:'${v.uid}'})"><img src="${u.avatar}" alt=""></div>
+            <div>
+              <strong style="cursor:pointer" onclick="go('channel',{id:'${v.uid}'})">${u.name}</strong>
+              <div style="color:var(--muted);font-size:.8rem">${fmtViews(u.subs)} সাবস্ক্রাইবার</div>
+            </div>
+            ${me && me.id!==v.uid ? `
+              <button class="act-btn sub-btn ms-2 ${isSub(v.uid)?'done':''}" onclick="toggleSub('${v.uid}');pgWatch('${vid}')">
+                ${isSub(v.uid)?'<i class="bi bi-check-lg"></i> সাবস্ক্রাইবড':'সাবস্ক্রাইব'}
+              </button>
+              ${isSub(v.uid)?`<button class="icon-btn" style="color:${bellOn(v.uid)?'#fff':'var(--muted)'}" onclick="toggleBell('${v.uid}');pgWatch('${vid}')">
+                <i class="bi bi-bell${bellOn(v.uid)?'-fill':''}"></i>
+              </button>`:''}
+            `:''}
+          </div>
+          <div id="actionsArea" class="d-flex gap-2 flex-wrap align-items-center"></div>
+        </div>
+        <div class="mt-3 p-3 rounded" style="background:var(--card);border-radius:12px">
+          <div class="d-flex gap-2 mb-2" style="font-size:.83rem;color:var(--muted)">
+            <span><strong style="color:var(--text)">${fmtViews((v.views||0)+1)}</strong> ভিউ</span>
+            <span>•</span>
+            <span>${timeAgo(v.at)}</span>
+            <span class="badge bg-secondary ms-1">${v.cat||'other'}</span>
+            ${v.tgFileId?'<span class="ms-auto"><i class="bi bi-cloud-check text-success"></i> টেলিগ্রাম ক্লাউড</span>':''}
+          </div>
+          <p style="white-space:pre-wrap;font-size:.88rem;margin:0">${escHtml(v.desc||'কোন বিবরণ নেই')}</p>
+        </div>
+        <div id="cmtSection" class="mt-4"></div>
+      </div>
+      <div class="sg-section">
+        <h6 class="mb-3">পরবর্তী ভিডিও</h6>
+        ${suggested.map(sv=>{const su=getUser(sv.uid); return `
+          <div class="sg-card" onclick="go('watch',{v:'${sv.id}'})">
+            <div class="sg-thumb"><img src="${sv.thumb}" alt="" onerror="this.src='https://placehold.co/168x94/272727/fff?text=V'"></div>
+            <div class="sg-meta">
+              <h4>${escHtml(sv.title)}</h4>
+              <p>${su.name}</p>
+              <p>${fmtViews(sv.views)} ভিউ • ${timeAgo(sv.at)}</p>
+            </div>
+          </div>`;}).join('')}
+      </div>
+    </div>`;
+
+  // Load Telegram video if needed
+  if(stream.type==='telegram'){
+    const player = document.getElementById('mainPlayer');
+    loadTgVideo(stream.fileId, player);
+  }
+
+  renderActions(vid);
+  renderComments(vid);
+}
+
+function renderActions(vid){
+  const likes=DB.g('likes');
+  const lc=likes.filter(l=>l.vid===vid&&l.type==='like').length;
+  const dc=likes.filter(l=>l.vid===vid&&l.type==='dislike').length;
+  const my=me?likes.find(l=>l.vid===vid&&l.uid===me.id):null;
+  const el=document.getElementById('actionsArea');
+  if(!el) return;
+  el.innerHTML=`
+    <div class="d-flex rounded-pill overflow-hidden" style="background:var(--card)">
+      <button class="act-btn ${my?.type==='like'?'lit':''}" style="border-radius:20px 0 0 20px" onclick="doLike('${vid}','like')">
+        <i class="bi bi-hand-thumbs-up${my?.type==='like'?'-fill':''}"></i> ${lc||''}
+      </button>
+      <div style="width:1px;background:var(--border)"></div>
+      <button class="act-btn ${my?.type==='dislike'?'lit':''}" style="border-radius:0 20px 20px 0" onclick="doLike('${vid}','dislike')">
+        <i class="bi bi-hand-thumbs-down${my?.type==='dislike'?'-fill':''}"></i> ${dc||''}
+      </button>
+    </div>
+    <button class="act-btn" onclick="shareVid('${vid}')"><i class="bi bi-share"></i> শেয়ার</button>
+    <button class="act-btn" onclick="dlVid('${vid}')"><i class="bi bi-download"></i> ডাউনলোড</button>`;
+}
+
+function shareVid(vid){
+  const url=location.origin+location.pathname+'#watch?v='+vid;
+  navigator.clipboard.writeText(url).then(()=>toast('লিংক কপি হয়েছে! 📋','success'));
+}
+
+async function dlVid(vid){
+  const v=DB.g('videos').find(x=>x.id===vid);
+  if(!v) return;
+  if(v.tgFileId){
+    try{
+      const r=await fetch(CFG.tgApi+'/bot'+CFG.botToken+'/getFile?file_id='+v.tgFileId);
+      const d=await r.json();
+      if(d.ok){
+        const url=CFG.tgApi+'/file/bot'+CFG.botToken+'/'+d.result.file_path;
+        window.open(url,'_blank');
+        toast('ডাউনলোড শুরু হচ্ছে...','info');
+      }
+    }catch(e){ toast('ডাউনলোড সমস্যা','danger'); }
+  } else {
+    toast('ডেমো ভিডিও ডাউনলোড','info');
+    window.open('https://www.w3schools.com/html/mov_bbb.mp4','_blank');
+  }
+}
+
+function renderComments(vid){
+  const cmts=DB.g('comments').filter(c=>c.vid===vid);
+  const el=document.getElementById('cmtSection');
+  if(!el) return;
+  el.innerHTML=`
+    <h6 class="mb-3">${cmts.length} কমেন্ট</h6>
+    ${me?`<div class="cmt-input">
+      <img src="${me.avatar}" alt="">
+      <input type="text" placeholder="কমেন্ট লিখুন..." id="cmtIn" onkeydown="if(event.key==='Enter'){postComment('${vid}',this.value);this.value=''}">
+      <button class="btn btn-sm btn-primary rounded-pill ms-2" onclick="postComment('${vid}',document.getElementById('cmtIn').value);document.getElementById('cmtIn').value=''">পোস্ট</button>
+    </div>`:`<p style="color:var(--muted);font-size:.85rem" class="mb-3">কমেন্ট করতে <a href="#" onclick="go('login')" style="color:var(--blue)">লগইন</a> করুন</p>`}
+    <div>${cmts.map(c=>{const cu=getUser(c.uid); return `
+      <div class="cmt-item fade-up">
+        <div class="c-av" onclick="go('channel',{id:'${c.uid}'})"><img src="${cu.avatar}" alt=""></div>
+        <div>
+          <div style="font-size:.83rem"><strong style="cursor:pointer" onclick="go('channel',{id:'${c.uid}'})">${cu.name}</strong> <span style="color:var(--muted);font-size:.73rem;margin-left:6px">${timeAgo(c.at)}</span></div>
+          <p style="font-size:.88rem;margin:4px 0 6px;line-height:1.4">${escHtml(c.text)}</p>
+          <div class="d-flex gap-3"><button class="btn btn-sm text-muted p-0" style="font-size:.8rem"><i class="bi bi-hand-thumbs-up"></i></button><button class="btn btn-sm text-muted p-0" style="font-size:.8rem"><i class="bi bi-hand-thumbs-down"></i></button><button class="btn btn-sm text-muted p-0" style="font-size:.8rem">রিপ্লাই</button></div>
+        </div>
+      </div>`;}).join('')}</div>`;
+}
+
+// ======================== PAGE: UPLOAD ========================
+function pgUpload(){
+  if(!me) return go('login');
+  document.getElementById('page').innerHTML=`
+    <div class="fade-up" style="max-width:780px;margin:0 auto">
+      <h5 class="mb-4"><i class="bi bi-cloud-arrow-up me-2"></i>ভিডিও আপলোড</h5>
+      <div class="alert alert-info d-flex align-items-center gap-2" style="background:rgba(62,166,255,.1);border-color:rgba(62,166,255,.3)">
+        <i class="bi bi-telegram" style="font-size:1.3rem"></i>
+        <div>টেলিগ্রাম ক্লাউডে ভিডিও স্টোর হবে। <strong>Bot Connected</strong> ✓</div>
+      </div>
+      <form onsubmit="return handleUploadForm(event)">
+        <div class="drop-zone mb-4" id="dropZone" onclick="document.getElementById('vFile').click()">
+          <i class="bi bi-cloud-arrow-up"></i>
+          <h5 class="mt-2">ভিডিও ফাইল সিলেক্ট করুন</h5>
+          <p style="color:var(--muted)">ড্র্যাগ & ড্রপ অথবা ক্লিক করুন</p>
+          <p style="color:var(--muted);font-size:.8rem">MP4, MKV, AVI, WebM • সর্বোচ্চ 2GB</p>
+          <div id="fileInfo" class="mt-2" style="color:var(--blue)"></div>
+        </div>
+        <input type="file" id="vFile" accept="video/*" style="display:none" onchange="showFile(this)">
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">ভিডিও টাইটেল <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="fTitle" required placeholder="ভিডিওর শিরোনাম লিখুন..." maxlength="100">
+          </div>
+          <div class="col-12">
+            <label class="form-label">বিবরণ</label>
+            <textarea class="form-control" id="fDesc" rows="3" placeholder="ভিডিও সম্পর্কে লিখুন..."></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">থাম্বনেইল URL</label>
+            <input type="url" class="form-control" id="fThumb" placeholder="https://example.com/thumb.jpg">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">ক্যাটাগরি</label>
+            <select class="form-select" id="fCat">
+              <option value="education">শিক্ষা</option>
+              <option value="gaming">গেমিং</option>
+              <option value="music">মিউজিক</option>
+              <option value="entertainment">বিনোদন</option>
+              <option value="tech">টেক</option>
+              <option value="other">অন্যান্য</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="upload-progress" id="pWrap">
+          <div class="progress mt-3" style="height:6px;background:var(--card)">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" id="pBar" style="width:0%"></div>
+          </div>
+          <p class="text-center mt-2 small" style="color:var(--muted)" id="pText">আপলোড হচ্ছে...</p>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-red px-4" id="uploadBtn"><i class="bi bi-upload me-2"></i>আপলোড করুন</button>
+          <button type="button" class="btn btn-outline-secondary" onclick="go('home')">বাতিল</button>
+        </div>
+      </form>
+    </div>`;
+
+  // Drag drop
+  const dz=document.getElementById('dropZone');
+  dz.ondragover=e=>{e.preventDefault();dz.style.borderColor='var(--blue)';};
+  dz.ondragleave=()=>{dz.style.borderColor='';};
+  dz.ondrop=e=>{e.preventDefault();dz.style.borderColor='';if(e.dataTransfer.files[0]){document.getElementById('vFile').files=e.dataTransfer.files;showFile(document.getElementById('vFile'));}};
+}
+
+function showFile(inp){
+  const f=inp.files[0];
+  if(f) document.getElementById('fileInfo').innerHTML=`<i class="bi bi-file-earmark-play me-1"></i>${f.name} (${(f.size/1024/1024).toFixed(1)} MB)`;
+}
+
+function handleUploadForm(e){
+  e.preventDefault();
+  const file = document.getElementById('vFile').files[0];
+  const title = document.getElementById('fTitle').value.trim();
+  const desc = document.getElementById('fDesc').value.trim();
+  const thumb = document.getElementById('fThumb').value.trim();
+  const cat = document.getElementById('fCat').value;
+  if(!title) return toast('টাইটেল দিন!','warning');
+  document.getElementById('uploadBtn').disabled=true;
+  telegramUpload(file||null, title, desc, thumb, cat);
+  return false;
+}
+
+// ======================== PAGE: LOGIN ========================
+function pgLogin(){
+  document.getElementById('page').innerHTML=`
+    <div class="auth-box fade-up">
+      <div class="text-center mb-3"><i class="bi bi-play-btn-fill text-danger" style="font-size:2.8rem"></i></div>
+      <h4 class="text-center mb-1">সাইন ইন</h4>
+      <p class="text-center mb-4" style="color:var(--muted)">VidStream এ স্বাগতম</p>
+      <form onsubmit="event.preventDefault();login(this.email.value,this.pass.value)">
+        <div class="mb-3">
+          <label class="form-label">Gmail</label>
+          <div class="input-group"><span class="input-group-text" style="background:#121212;border-color:var(--border)"><i class="bi bi-envelope"></i></span>
+          <input type="email" class="form-control" name="email" placeholder="example@gmail.com" required></div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label">পাসওয়ার্ড</label>
+          <div class="input-group"><span class="input-group-text" style="background:#121212;border-color:var(--border)"><i class="bi bi-lock"></i></span>
+          <input type="password" class="form-control" name="pass" placeholder="পাসওয়ার্ড দিন" required></div>
+        </div>
+        <button type="submit" class="btn btn-red w-100 mb-3">লগইন</button>
+        <p class="text-center" style="color:var(--muted);font-size:.9rem">একাউন্ট নেই? <a href="#" onclick="go('register')" style="color:var(--blue)">রেজিস্টার করুন</a></p>
+      </form>
+      <hr style="border-color:var(--border)">
+      <p class="small text-center mb-2" style="color:var(--muted)">ডেমো একাউন্ট দিয়ে ট্রাই করুন:</p>
+      <div class="d-flex flex-wrap gap-2 justify-content-center">
+        <button class="btn btn-sm btn-outline-danger" onclick="login('tech@gmail.com','123456')">টেক বাংলা</button>
+        <button class="btn btn-sm btn-outline-primary" onclick="login('creative@gmail.com','123456')">ক্রিয়েটিভ</button>
+        <button class="btn btn-sm btn-outline-warning" onclick="login('gaming@gmail.com','123456')">গেমিং</button>
+      </div>
+    </div>`;
+}
+
+// ======================== PAGE: REGISTER ========================
+function pgRegister(){
+  document.getElementById('page').innerHTML=`
+    <div class="auth-box fade-up">
+      <div class="text-center mb-3"><i class="bi bi-play-btn-fill text-danger" style="font-size:2.8rem"></i></div>
+      <h4 class="text-center mb-1">একাউন্ট তৈরি করুন</h4>
+      <p class="text-center mb-4" style="color:var(--muted)">VidStream এ যোগ দিন - ফ্রি!</p>
+      <form onsubmit="event.preventDefault();register(this.nm.value,this.email.value,this.pass.value)">
+        <div class="mb-3">
+          <label class="form-label">নাম / চ্যানেলের নাম</label>
+          <div class="input-group"><span class="input-group-text" style="background:#121212;border-color:var(--border)"><i class="bi bi-person"></i></span>
+          <input type="text" class="form-control" name="nm" placeholder="আপনার নাম" required minlength="2"></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Gmail</label>
+          <div class="input-group"><span class="input-group-text" style="background:#121212;border-color:var(--border)"><i class="bi bi-envelope"></i></span>
+          <input type="email" class="form-control" name="email" placeholder="example@gmail.com" required></div>
+          <div class="form-text">শুধুমাত্র @gmail.com</div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label">পাসওয়ার্ড</label>
+          <div class="input-group"><span class="input-group-text" style="background:#121212;border-color:var(--border)"><i class="bi bi-lock"></i></span>
+          <input type="password" class="form-control" name="pass" placeholder="মিনিমাম ৬ অক্ষর" required minlength="6"></div>
+        </div>
+        <button type="submit" class="btn btn-red w-100 mb-3">রেজিস্টার</button>
+        <p class="text-center" style="color:var(--muted);font-size:.9rem">একাউন্ট আছে? <a href="#" onclick="go('login')" style="color:var(--blue)">লগইন করুন</a></p>
+      </form>
+    </div>`;
+}
+
+// ======================== PAGE: CHANNEL ========================
+function pgChannel(uid){
+  const u=getUser(uid);
+  const vids=DB.g('videos').filter(v=>v.uid===uid);
+  const isMe = me && me.id===uid;
+
+  document.getElementById('page').innerHTML=`<div class="fade-up">
+    <div class="ch-header">
+      <div class="big-av"><img src="${u.avatar}" alt=""></div>
+      <div class="flex-grow-1">
+        <h4 class="mb-1">${u.name}</h4>
+        <p style="color:var(--muted);margin-bottom:6px;font-size:.88rem">${u.email||''} • ${fmtViews(u.subs)} সাবস্ক্রাইবার • ${vids.length} ভিডিও</p>
+        <p style="color:var(--muted);font-size:.8rem;margin-bottom:12px">যোগদান: ${timeAgo(u.joined)}</p>
+        ${!isMe && me ? `<div class="d-flex gap-2 align-items-center">
+          <button class="act-btn sub-btn ${isSub(uid)?'done':''}" onclick="toggleSub('${uid}');pgChannel('${uid}')">
+            ${isSub(uid)?'<i class="bi bi-check-lg"></i> সাবস্ক্রাইবড':'সাবস্ক্রাইব'}
+          </button>
+          ${isSub(uid)?`<button class="icon-btn" style="color:${bellOn(uid)?'#fff':'var(--muted)'}" onclick="toggleBell('${uid}');pgChannel('${uid}')"><i class="bi bi-bell${bellOn(uid)?'-fill':''}"></i></button>`:''}
+        </div>`:''}
+        ${isMe?`<button class="btn btn-outline-light btn-sm" onclick="go('upload')"><i class="bi bi-plus-lg me-1"></i>ভিডিও আপলোড</button>`:''}
+      </div>
+    </div>
+    <ul class="nav nav-tabs mb-4" style="border-color:var(--border)">
+      <li class="nav-item"><a class="nav-link active text-white" style="border-color:var(--red) transparent transparent;background:transparent">ভিডিও (${vids.length})</a></li>
+    </ul>
+    <div class="row g-3">
+      ${vids.length ? vids.map(v=>`<div class="col-12 col-sm-6 col-md-4 col-lg-3">${vCard(v)}</div>`).join('') :
+      '<div class="empty col-12"><i class="bi bi-camera-video"></i><h5>কোন ভিডিও নেই</h5></div>'}
+    </div>
+  </div>`;
+}
+
+// ======================== PAGE: SEARCH ========================
+function pgSearch(q){
+  const ql=q.toLowerCase();
+  const vids=DB.g('videos').filter(v=>v.title.toLowerCase().includes(ql)||v.desc.toLowerCase().includes(ql));
+  document.getElementById('page').innerHTML=`<div class="fade-up">
+    <h5 class="mb-4">"${escHtml(q)}" এর ফলাফল (${vids.length})</h5>
+    ${vids.length ? vids.map(v=>{const u=getUser(v.uid); return `
+      <div class="d-flex gap-3 mb-4 p-2 rounded" style="cursor:pointer" onclick="go('watch',{v:'${v.id}'})">
+        <div style="width:340px;min-width:220px;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#1a1a1a">
+          <img src="${v.thumb}" style="width:100%;height:100%;object-fit:cover" onerror="this.src='https://placehold.co/340x190/272727/fff?text=V'">
+        </div>
+        <div>
+          <h5 style="font-size:1.05rem">${escHtml(v.title)}</h5>
+          <p class="small mb-2" style="color:var(--muted)">${fmtViews(v.views)} ভিউ • ${timeAgo(v.at)}</p>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <img src="${u.avatar}" width="24" height="24" style="border-radius:50%">
+            <span class="small" style="color:var(--muted)">${u.name}</span>
+          </div>
+          <p class="small" style="color:var(--muted)">${escHtml((v.desc||'').substring(0,100))}...</p>
+        </div>
+      </div>`;}).join('') :
+    `<div class="empty"><i class="bi bi-search"></i><h5>কোন ফলাফল নেই</h5><p>"${escHtml(q)}" দিয়ে কিছু পাওয়া যায়নি</p></div>`}
+  </div>`;
+}
+
+// ======================== PAGE: MY SUBSCRIPTIONS ========================
+function pgMySubs(){
+  if(!me) return go('login');
+  const mySubs=DB.g('subs').filter(s=>s.uid===me.id);
+  const chIds=mySubs.map(s=>s.chId);
+  const vids=DB.g('videos').filter(v=>chIds.includes(v.uid)).sort((a,b)=>b.at-a.at);
+
+  document.getElementById('page').innerHTML=`<div class="fade-up">
+    <h5 class="mb-4"><i class="bi bi-collection-play me-2"></i>সাবস্ক্রিপশন</h5>
+    ${mySubs.length ? `
+      <div class="d-flex gap-3 mb-4 flex-wrap pb-3" style="border-bottom:1px solid var(--border)">
+        ${mySubs.map(s=>{const ch=getUser(s.chId); return `
+          <div class="text-center" style="cursor:pointer" onclick="go('channel',{id:'${s.chId}'})">
+            <img src="${ch.avatar}" width="56" height="56" style="border-radius:50%">
+            <div style="font-size:.72rem;margin-top:3px;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ch.name}</div>
+          </div>`;}).join('')}
+      </div>
+      <div class="row g-3">${vids.map(v=>`<div class="col-12 col-sm-6 col-md-4 col-lg-3">${vCard(v)}</div>`).join('')}</div>
+    `:`<div class="empty"><i class="bi bi-collection-play"></i><h5>কোন সাবস্ক্রিপশন নেই</h5><p>চ্যানেল সাবস্ক্রাইব করে ভিডিও পান</p></div>`}
+  </div>`;
+}
+
+// ======================== PAGE: STUDIO ========================
+function pgStudio(){
+  if(!me) return go('login');
+  const vids=DB.g('videos').filter(v=>v.uid===me.id);
+  const totalViews=vids.reduce((a,v)=>a+(v.views||0),0);
+  const totalLikes=DB.g('likes').filter(l=>vids.some(v=>v.id===l.vid)&&l.type==='like').length;
+  const totalComments=DB.g('comments').filter(c=>vids.some(v=>v.id===c.vid)).length;
+
+  document.getElementById('page').innerHTML=`<div class="fade-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h5><i class="bi bi-speedometer2 me-2"></i>ক্রিয়েটর স্টুডিও</h5>
+      <button class="btn btn-red btn-sm" onclick="go('upload')"><i class="bi bi-plus-lg me-1"></i>আপলোড</button>
+    </div>
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3"><div class="p-3 rounded text-center" style="background:var(--card)"><h3 class="text-danger mb-0">${vids.length}</h3><small style="color:var(--muted)">ভিডিও</small></div></div>
+      <div class="col-6 col-md-3"><div class="p-3 rounded text-center" style="background:var(--card)"><h3 style="color:var(--blue)" class="mb-0">${fmtViews(totalViews)}</h3><small style="color:var(--muted)">মোট ভিউ</small></div></div>
+      <div class="col-6 col-md-3"><div class="p-3 rounded text-center" style="background:var(--card)"><h3 class="text-success mb-0">${fmtViews(me.subs||0)}</h3><small style="color:var(--muted)">সাবস্ক্রাইবার</small></div></div>
+      <div class="col-6 col-md-3"><div class="p-3 rounded text-center" style="background:var(--card)"><h3 class="text-warning mb-0">${totalLikes}</h3><small style="color:var(--muted)">লাইক</small></div></div>
+    </div>
+    <div class="rounded overflow-hidden" style="background:var(--card);border:1px solid var(--border)">
+      <div class="p-3" style="border-bottom:1px solid var(--border)"><h6 class="mb-0">আমার ভিডিও</h6></div>
+      ${vids.length ? `<div class="table-responsive"><table class="table table-dark table-hover mb-0" style="background:transparent;font-size:.88rem">
+        <thead><tr><th>ভিডিও</th><th class="text-center">ভিউ</th><th class="text-center">লাইক</th><th class="text-center">কমেন্ট</th><th>স্টোরেজ</th><th>তারিখ</th><th></th></tr></thead>
+        <tbody>${vids.map(v=>{
+          const vl=DB.g('likes').filter(l=>l.vid===v.id&&l.type==='like').length;
+          const vc=DB.g('comments').filter(c=>c.vid===v.id).length;
+          return `<tr>
+            <td><div class="d-flex align-items-center gap-2" style="cursor:pointer" onclick="go('watch',{v:'${v.id}'})">
+              <img src="${v.thumb}" width="80" style="border-radius:6px;aspect-ratio:16/9;object-fit:cover" onerror="this.src='https://placehold.co/80x45/272727/fff?text=V'">
+              <div><div style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(v.title)}</div><small style="color:var(--muted)">${v.dur}</small></div>
+            </div></td>
+            <td class="text-center">${fmtViews(v.views)}</td>
+            <td class="text-center">${vl}</td>
+            <td class="text-center">${vc}</td>
+            <td>${v.tgFileId?'<span class="badge bg-success"><i class="bi bi-cloud-check"></i> TG</span>':'<span class="badge bg-secondary">Local</span>'}</td>
+            <td><small style="color:var(--muted)">${timeAgo(v.at)}</small></td>
+            <td><button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation();delVideo('${v.id}')"><i class="bi bi-trash"></i></button></td>
+          </tr>`}).join('')}</tbody>
+      </table></div>` :
+      `<div class="empty py-5"><i class="bi bi-camera-video" style="font-size:3rem"></i><p>এখনো কোন ভিডিও নেই</p><button class="btn btn-red mt-2" onclick="go('upload')">প্রথম ভিডিও আপলোড</button></div>`}
+    </div>
+  </div>`;
+}
+
+function delVideo(vid){
+  if(!confirm('ভিডিওটি মুছে ফেলতে চান?')) return;
+  DB.s('videos', DB.g('videos').filter(v=>v.id!==vid));
+  DB.s('comments', DB.g('comments').filter(c=>c.vid!==vid));
+  DB.s('likes', DB.g('likes').filter(l=>l.vid!==vid));
+  toast('ভিডিও মুছে ফেলা হয়েছে','success');
+  pgStudio();
+}
+
+// ======================== PAGE: NOTIFICATIONS ========================
+function pgNotifs(){
+  if(!me) return go('login');
+  const notifs=DB.g('notifs').filter(n=>n.uid===me.id);
+  document.getElementById('page').innerHTML=`<div class="fade-up" style="max-width:680px;margin:0 auto">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h5><i class="bi bi-bell me-2"></i>নোটিফিকেশন</h5>
+      ${notifs.length?`<button class="btn btn-sm btn-outline-secondary" onclick="markAllRead();pgNotifs()">সব পড়া হয়েছে</button>`:''}
+    </div>
+    ${notifs.length ? notifs.map(n=>`
+      <div class="d-flex gap-3 p-3 mb-2 rounded ${n.read?'':'border'}" style="background:var(--card);cursor:pointer;${n.read?'':'border-color:var(--blue)!important'}" onclick="clickNotif('${n.id}','${n.vid||''}')">
+        <img src="${n.img||'https://placehold.co/48/272727/fff?text=N'}" width="52" height="52" style="border-radius:8px;object-fit:cover">
+        <div>
+          <p class="mb-1" style="font-size:.88rem">${n.msg}</p>
+          <small style="color:var(--muted)">${timeAgo(n.at)}</small>
+          ${n.read?'':'<span class="badge bg-primary ms-2">নতুন</span>'}
+        </div>
+      </div>`).join('') :
+    `<div class="empty"><i class="bi bi-bell-slash"></i><h5>কোন নোটিফিকেশন নেই</h5></div>`}
+  </div>`;
+}
+
+// ======================== HASH ROUTING ========================
+function route(){
+  const h=location.hash.replace('#','');
+  if(!h||h==='/') return go('home');
+  const [path,qs]=h.split('?');
+  const p={};
+  if(qs) qs.split('&').forEach(x=>{const[k,v]=x.split('=');p[k]=decodeURIComponent(v);});
+
+  switch(path){
+    case 'home': go('home'); break;
+    case 'trending': go('trending'); break;
+    case 'watch': go('watch',p); break;
+    case 'upload': go('upload'); break;
+    case 'login': go('login'); break;
+    case 'register': go('register'); break;
+    case 'search': go('search',p); break;
+    case 'mysubs': go('mysubs'); break;
+    case 'studio': go('studio'); break;
+    case 'notifs': go('notifs'); break;
+    default:
+      if(path.startsWith('channel/')) go('channel',{id:path.split('/')[1]});
+      else go('home');
+  }
+}
+
+// Close notif panel on outside click
+document.addEventListener('click',e=>{
+  const nb=document.getElementById('notifBox');
+  if(nb.classList.contains('open') && !e.target.closest('.notif-box') && !e.target.closest('[onclick*="openNotifs"]')){
+    nb.classList.remove('open');
+  }
+});
+
+window.addEventListener('hashchange', route);
+window.addEventListener('resize',()=>{
+  if(innerWidth<=768) sideOpen=false;
+  document.getElementById('sideNav').classList.toggle('hide',!sideOpen);
+  document.getElementById('page').classList.toggle('full',!sideOpen);
+});
+
+// ======================== INIT ========================
+DB.init();
+route();
+</script>
+</body>
+</html>
