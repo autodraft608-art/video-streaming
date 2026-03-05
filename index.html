@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>MyTube - Video Calling Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        :root {
+            --primary: #ff0000;
+            --primary-dark: #cc0000;
+            --dark: #0f0f0f;
+            --light: #f9f9f9;
+            --gray: #606060;
+            --light-gray: #f0f0f0;
+            --border: #e5e5e5;
+            --white: #ffffff;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --green: #4CAF50;
+            --green-dark: #45a049;
+            --blue: #2196F3;
+            --red: #f44336;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.5;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            height: 56px;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .header-icons span {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            transition: all 0.2s;
+        }
+
+        .header-icons span:active {
+            transform: scale(0.9);
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            padding: 12px 16px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            z-index: 999;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light-gray);
+            border-radius: 25px;
+            padding: 8px 16px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus-within {
+            background: var(--white);
+            border-color: var(--primary);
+            box-shadow: 0 2px 10px rgba(255,0,0,0.1);
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 16px;
+            padding: 4px 0;
+        }
+
+        .search-box span {
+            color: var(--gray);
+            font-size: 22px;
+        }
+
+        /* Categories */
+        .categories {
+            position: fixed;
+            top: 112px;
+            left: 0;
+            right: 0;
+            padding: 12px 16px;
+            white-space: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            z-index: 998;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-chip {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--light-gray);
+            border-radius: 20px;
+            margin-right: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .category-chip.active {
+            background: var(--dark);
+            color: var(--white);
+        }
+
+        .category-chip:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 168px;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .view-all {
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Users Grid for Calling */
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .user-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-card:active {
+            transform: scale(0.95);
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #ff6b6b);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .online-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 14px;
+            height: 14px;
+            background: var(--green);
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .user-status {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .call-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .call-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .call-btn.video {
+            background: var(--blue);
+            color: white;
+        }
+
+        .call-btn.audio {
+            background: var(--green);
+            color: white;
+        }
+
+        .call-btn:active {
+            transform: scale(0.95);
+            opacity: 0.9;
+        }
+
+        /* Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 480px) {
+            .video-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .video-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .video-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .video-card:active {
+            transform: scale(0.98);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #ddd;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .video-info {
+            padding: 12px;
+        }
+
+        .video-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-channel {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 4px;
+        }
+
+        .video-stats {
+            font-size: 12px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Video Player Page */
+        .player-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--white);
+            z-index: 2000;
+            overflow-y: auto;
+            display: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .player-header {
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        .back-btn {
+            font-size: 28px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .back-btn:active {
+            opacity: 0.7;
+        }
+
+        .player-title {
+            font-size: 18px;
+            font-weight: 600;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .video-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: black;
+        }
+
+        .video-player iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .player-actions {
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 16px;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--light-gray);
+            transition: all 0.2s;
+            border: none;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+            background: #e0e0e0;
+        }
+
+        .action-btn.active {
+            color: var(--primary);
+            background: rgba(255,0,0,0.1);
+        }
+
+        .action-btn span {
+            font-size: 22px;
+        }
+
+        .comments-section {
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .comments-header {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .comment-input {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), #ff6b6b);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .comment-input-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .comment-input-box input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .comment-input-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .comment-submit {
+            align-self: flex-end;
+            padding: 8px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .comment-submit:active {
+            background: var(--primary-dark);
+            transform: scale(0.95);
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 12px;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* Call Interface */
+        .call-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--dark);
+            z-index: 5000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .call-header {
+            padding: 16px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .call-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .call-close {
+            font-size: 28px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .call-timer {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .call-videos {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .remote-video {
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .remote-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remote-video-placeholder {
+            text-align: center;
+            color: white;
+        }
+
+        .remote-video-placeholder span {
+            font-size: 80px;
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .local-video {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 160px;
+            background: #2a2a2a;
+            border-radius: 12px;
+            border: 2px solid white;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .local-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .local-video-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), #ff6b6b);
+            color: white;
+            font-size: 40px;
+        }
+
+        .call-controls {
+            padding: 24px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.5));
+        }
+
+        .call-control-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .call-control-btn:active {
+            transform: scale(0.9);
+        }
+
+        .call-control-btn.end {
+            background: var(--red);
+            transform: rotate(135deg);
+        }
+
+        .call-control-btn.end:active {
+            background: #d32f2f;
+        }
+
+        .call-control-btn.mute.active,
+        .call-control-btn.video-toggle.active {
+            background: var(--blue);
+        }
+
+        /* Incoming Call Modal */
+        .incoming-call {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 5500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .incoming-call-content {
+            background: white;
+            border-radius: 30px;
+            padding: 32px;
+            text-align: center;
+            max-width: 320px;
+            width: 100%;
+        }
+
+        .incoming-call-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #ff6b6b);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 600;
+            margin: 0 auto 16px;
+        }
+
+        .incoming-call-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .incoming-call-type {
+            font-size: 16px;
+            color: var(--gray);
+            margin-bottom: 24px;
+        }
+
+        .incoming-call-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .incoming-call-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .incoming-call-btn.accept {
+            background: var(--green);
+            color: white;
+        }
+
+        .incoming-call-btn.decline {
+            background: var(--red);
+            color: white;
+        }
+
+        .incoming-call-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            border-top: 1px solid var(--border);
+            z-index: 1000;
+            height: 64px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 4px 12px;
+            flex: 1;
+            background: none;
+            border: none;
+        }
+
+        .nav-item:active {
+            opacity: 0.7;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item span {
+            font-size: 24px;
+        }
+
+        /* Upload Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            padding: 16px;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .modal-input:focus {
+            border-color: var(--primary);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .modal-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn.primary:active {
+            background: var(--primary-dark);
+        }
+
+        .modal-btn.secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .modal-btn.secondary:active {
+            background: #e0e0e0;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 16px;
+            right: 16px;
+            background: var(--dark);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 14px;
+            z-index: 4000;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state span {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <span class="logo-icon">▶️</span>
+            <span class="logo-text">My<span>Tube</span></span>
+        </div>
+        <div class="header-icons">
+            <span onclick="showToast('Cast to TV')">📺</span>
+            <span onclick="showUploadModal()">📤</span>
+            <span onclick="showToast('Notifications')">🔔</span>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search MyTube..." oninput="searchVideos()">
+            <span>🔍</span>
+        </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="categories" id="categories">
+        <button class="category-chip active" onclick="filterCategory('all')">All</button>
+        <button class="category-chip" onclick="filterCategory('music')">Music</button>
+        <button class="category-chip" onclick="filterCategory('gaming')">Gaming</button>
+        <button class="category-chip" onclick="filterCategory('tech')">Tech</button>
+        <button class="category-chip" onclick="filterCategory('education')">Education</button>
+        <button class="category-chip" onclick="filterCategory('entertainment')">Entertainment</button>
+        <button class="category-chip" onclick="filterCategory('sports')">Sports</button>
+        <button class="category-chip" onclick="filterCategory('news')">News</button>
+        <button class="category-chip" onclick="filterCategory('vlogs')">Vlogs</button>
+        <button class="category-chip" onclick="filterCategory('comedy')">Comedy</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Online Users Section -->
+        <div class="section-header">
+            <div class="section-title">
+                <span>📞</span> Online Now
+            </div>
+            <span class="view-all" onclick="showAllUsers()">View All</span>
+        </div>
+        <div class="users-grid" id="onlineUsers">
+            <!-- Online users will be loaded here -->
+        </div>
+
+        <!-- Videos Section -->
+        <div class="section-title">
+            <span>🔥</span> Trending Videos
+        </div>
+        <div class="video-grid" id="videoGrid">
+            <!-- Videos will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="navigateTo('home')">
+            <span>🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('calls')">
+            <span>📞</span>
+            <span>Calls</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('shorts')">
+            <span>📱</span>
+            <span>Shorts</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('library')">
+            <span>📚</span>
+            <span>Library</span>
+        </button>
+    </div>
+
+    <!-- Video Player Page -->
+    <div class="player-page" id="playerPage">
+        <div class="player-header">
+            <span class="back-btn" onclick="closePlayer()">←</span>
+            <div class="player-title" id="playerVideoTitle">Now Playing</div>
+        </div>
+        <div class="video-player" id="videoPlayer">
+            <iframe id="youtubeIframe" src="" allowfullscreen></iframe>
+        </div>
+        
+        <div class="player-actions">
+            <button class="action-btn" id="likeBtn" onclick="toggleLike()">
+                <span>👍</span>
+                <span id="likeCount">0</span>
+            </button>
+            <button class="action-btn" onclick="shareVideo()">
+                <span>↗️</span>
+                <span>Share</span>
+            </button>
+            <button class="action-btn" onclick="saveVideo()">
+                <span>🔖</span>
+                <span>Save</span>
+            </button>
+        </div>
+
+        <div class="comments-section">
+            <div class="comments-header">
+                💬 Comments <span id="commentCount">0</span>
+            </div>
+            
+            <div class="comment-input">
+                <div class="comment-avatar" id="userAvatar">U</div>
+                <div class="comment-input-box">
+                    <input type="text" id="commentText" placeholder="Add a public comment..." onkeypress="handleCommentKeypress(event)">
+                    <button class="comment-submit" onclick="addComment()">COMMENT</button>
+                </div>
+            </div>
+
+            <div class="comment-list" id="commentList">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Call Interface -->
+    <div class="call-interface" id="callInterface">
+        <div class="call-header">
+            <div class="call-header-left">
+                <span class="call-close" onclick="endCall()">←</span>
+                <span class="call-timer" id="callTimer">00:00</span>
+            </div>
+            <div class="call-quality" id="callQuality">📶 HD</div>
+        </div>
+        
+        <div class="call-videos">
+            <div class="remote-video" id="remoteVideo">
+                <div class="remote-video-placeholder" id="remotePlaceholder">
+                    <span>👤</span>
+                    <h3 id="remoteUserName">Waiting for user...</h3>
+                </div>
+                <video id="remoteVideoElement" autoplay playsinline style="display: none;"></video>
+            </div>
+            
+            <div class="local-video" id="localVideo" onclick="toggleLocalVideo()">
+                <div class="local-video-placeholder" id="localPlaceholder">
+                    <span>👤</span>
+                </div>
+                <video id="localVideoElement" autoplay playsinline muted style="display: none;"></video>
+            </div>
+        </div>
+        
+        <div class="call-controls">
+            <button class="call-control-btn mute" id="muteBtn" onclick="toggleMute()">
+                <span>🎤</span>
+            </button>
+            <button class="call-control-btn video-toggle" id="videoBtn" onclick="toggleVideo()">
+                <span>📹</span>
+            </button>
+            <button class="call-control-btn end" onclick="endCall()">
+                <span>📞</span>
+            </button>
+            <button class="call-control-btn" onclick="switchCamera()">
+                <span>🔄</span>
+            </button>
+            <button class="call-control-btn" onclick="showToast('Call recording started')">
+                <span>⏺️</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Incoming Call Modal -->
+    <div class="incoming-call" id="incomingCall">
+        <div class="incoming-call-content">
+            <div class="incoming-call-avatar" id="incomingCallAvatar">J</div>
+            <div class="incoming-call-name" id="incomingCallName">John Doe</div>
+            <div class="incoming-call-type" id="incomingCallType">Incoming video call</div>
+            <div class="incoming-call-buttons">
+                <button class="incoming-call-btn decline" onclick="declineCall()">❌</button>
+                <button class="incoming-call-btn accept" onclick="acceptCall()">✅</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-title">📤 Upload to MyTube</div>
+            <input type="text" class="modal-input" id="videoTitle" placeholder="Video Title" required>
+            <input type="url" class="modal-input" id="videoUrl" placeholder="YouTube Video URL" required>
+            <input type="text" class="modal-input" id="videoChannel" placeholder="Channel Name" required>
+            <select class="modal-input" id="videoCategory">
+                <option value="music">Music</option>
+                <option value="gaming">Gaming</option>
+                <option value="tech">Tech</option>
+                <option value="education">Education</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="sports">Sports</option>
+                <option value="news">News</option>
+                <option value="vlogs">Vlogs</option>
+                <option value="comedy">Comedy</option>
+            </select>
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="hideUploadModal()">Cancel</button>
+                <button class="modal-btn primary" onclick="uploadVideo()">Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // App State
+        let currentUser = {
+            id: 'user_' + Math.random().toString(36).substr(2, 9),
+            name: 'User_' + Math.floor(Math.random() * 1000),
+            status: 'online'
+        };
+        
+        let currentVideo = null;
+        let currentCategory = 'all';
+        let searchTerm = '';
+        let videos = [];
+        let comments = {};
+        let likes = {};
+
+        // Call State
+        let isInCall = false;
+        let isMuted = false;
+        let isVideoEnabled = true;
+        let callTimer = null;
+        let callSeconds = 0;
+        let localStream = null;
+        let remoteStream = null;
+        let peerConnection = null;
+
+        // Users for calling
+        let onlineUsers = [
+            {
+                id: 'user1',
+                name: 'John Smith',
+                avatar: 'J',
+                status: 'online',
+                lastSeen: 'Just now'
+            },
+            {
+                id: 'user2',
+                name: 'Emma Watson',
+                avatar: 'E',
+                status: 'online',
+                lastSeen: 'Just now'
+            },
+            {
+                id: 'user3',
+                name: 'Mike Johnson',
+                avatar: 'M',
+                status: 'online',
+                lastSeen: 'Just now'
+            },
+            {
+                id: 'user4',
+                name: 'Sarah Wilson',
+                avatar: 'S',
+                status: 'online',
+                lastSeen: 'Just now'
+            },
+            {
+                id: 'user5',
+                name: 'Chris Brown',
+                avatar: 'C',
+                status: 'online',
+                lastSeen: 'Just now'
+            },
+            {
+                id: 'user6',
+                name: 'Lisa Anderson',
+                avatar: 'L',
+                status: 'online',
+                lastSeen: 'Just now'
+            }
+        ];
+
+        // Initialize Data
+        function initData() {
+            // Load from localStorage or use default
+            const savedVideos = localStorage.getItem('mytube_videos');
+            const savedComments = localStorage.getItem('mytube_comments');
+            const savedLikes = localStorage.getItem('mytube_likes');
+
+            if (savedVideos) {
+                videos = JSON.parse(savedVideos);
+            } else {
+                // Default videos
+                videos = [
+                    {
+                        id: '1',
+                        title: 'Building a Social Media App with JavaScript',
+                        channel: 'Tech Tutorials',
+                        views: '125K',
+                        timestamp: '2 days ago',
+                        duration: '15:24',
+                        category: 'tech',
+                        youtubeId: 'dQw4w9WgXcQ',
+                        thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+                        likes: 0
+                    },
+                    {
+                        id: '2',
+                        title: 'Top 10 Gaming Moments 2024',
+                        channel: 'Game Central',
+                        views: '89K',
+                        timestamp: '5 days ago',
+                        duration: '10:15',
+                        category: 'gaming',
+                        youtubeId: 'dQw4w9WgXcQ',
+                        thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+                        likes: 0
+                    },
+                    {
+                        id: '3',
+                        title: 'Latest Music Mix - Summer Vibes 2024',
+                        channel: 'Music Official',
+                        views: '250K',
+                        timestamp: '1 day ago',
+                        duration: '8:45',
+                        category: 'music',
+                        youtubeId: 'dQw4w9WgXcQ',
+                        thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+                        likes: 0
+                    },
+                    {
+                        id: '4',
+                        title: 'Learn JavaScript in 1 Hour',
+                        channel: 'Code Academy',
+                        views: '500K',
+                        timestamp: '1 week ago',
+                        duration: '60:00',
+                        category: 'education',
+                        youtubeId: 'dQw4w9WgXcQ',
+                        thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+                        likes: 0
+                    },
+                    {
+                        id: '5',
+                        title: 'Funny Cat Videos Compilation',
+                        channel: 'Funny Pets',
+                        views: '1M',
+                        timestamp: '3 days ago',
+                        duration: '12:30',
+                        category: 'comedy',
+                        youtubeId: 'dQw4w9WgXcQ',
+                        thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+                        likes: 0
+                    },
+                    {
+                        id: '6',
+                        title: 'Daily Vlog: My Life in Tokyo',
+                        channel: 'Travel Vlogger',
+                        views: '75K',
+                        timestamp: '12 hours ago',
+                        duration: '20:15',
+                        category: 'vlogs',
+                        youtubeId: 'dQw4w9WgXcQ',
+                        thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+                        likes: 0
+                    }
+                ];
+                localStorage.setItem('mytube_videos', JSON.stringify(videos));
+            }
+
+            if (savedComments) {
+                comments = JSON.parse(savedComments);
+            } else {
+                // Default comments
+                comments = {
+                    '1': [
+                        {
+                            id: 'c1',
+                            text: 'Great tutorial! Very helpful.',
+                            author: 'John Doe',
+                            time: '2 hours ago'
+                        },
+                        {
+                            id: 'c2',
+                            text: 'Thanks for making this!',
+                            author: 'Jane Smith',
+                            time: '5 hours ago'
+                        }
+                    ]
+                };
+                localStorage.setItem('mytube_comments', JSON.stringify(comments));
+            }
+
+            if (savedLikes) {
+                likes = JSON.parse(savedLikes);
+            } else {
+                likes = {};
+                localStorage.setItem('mytube_likes', JSON.stringify(likes));
+            }
+
+            // Set user avatar
+            document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+            
+            // Load online users
+            loadOnlineUsers();
+        }
+
+        // Load Online Users
+        function loadOnlineUsers() {
+            const usersGrid = document.getElementById('onlineUsers');
+            
+            usersGrid.innerHTML = onlineUsers.map(user => `
+                <div class="user-card">
+                    <div class="user-avatar">
+                        ${user.avatar}
+                        <span class="online-indicator"></span>
+                    </div>
+                    <div class="user-name">${user.name}</div>
+                    <div class="user-status">Online</div>
+                    <div class="call-buttons">
+                        <button class="call-btn video" onclick="startCall('${user.id}', 'video')">
+                            <span>📹</span> Video
+                        </button>
+                        <button class="call-btn audio" onclick="startCall('${user.id}', 'audio')">
+                            <span>🎤</span> Audio
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Start Call
+        async function startCall(userId, type) {
+            try {
+                // Request camera/microphone permissions
+                localStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: type === 'video', 
+                    audio: true 
+                });
+                
+                // Display local video
+                const localVideoElement = document.getElementById('localVideoElement');
+                const localPlaceholder = document.getElementById('localPlaceholder');
+                
+                if (type === 'video' && localVideoElement) {
+                    localVideoElement.srcObject = localStream;
+                    localVideoElement.style.display = 'block';
+                    localPlaceholder.style.display = 'none';
+                }
+                
+                // Get user name
+                const user = onlineUsers.find(u => u.id === userId);
+                document.getElementById('remoteUserName').textContent = user.name;
+                
+                // Show call interface
+                document.getElementById('callInterface').style.display = 'flex';
+                
+                // Start call timer
+                startCallTimer();
+                
+                // Show toast
+                showToast(`Calling ${user.name}...`);
+                
+                // Simulate remote user after 2 seconds
+                setTimeout(() => {
+                    simulateRemoteUser(user.name, type);
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error accessing media devices:', error);
+                showToast('Please allow camera and microphone access');
+            }
+        }
+
+        // Simulate Remote User (for demo purposes)
+        function simulateRemoteUser(userName, type) {
+            document.getElementById('remotePlaceholder').style.display = 'none';
+            document.getElementById('remoteVideoElement').style.display = 'block';
+            
+            // Create a fake video stream (in real app, this would be WebRTC)
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 480;
+            const ctx = canvas.getContext('2d');
+            
+            // Draw a placeholder animation
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.font = '48px Arial';
+            ctx.fillText('📹', 250, 240);
+            ctx.font = '24px Arial';
+            ctx.fillText(userName, 220, 320);
+            
+            // In real app, this would be a MediaStream from peer connection
+            showToast(`Connected with ${userName}`);
+        }
+
+        // Toggle Mute
+        function toggleMute() {
+            if (localStream) {
+                const audioTracks = localStream.getAudioTracks();
+                audioTracks.forEach(track => {
+                    track.enabled = isMuted;
+                });
+            }
+            
+            isMuted = !isMuted;
+            const muteBtn = document.getElementById('muteBtn');
+            muteBtn.classList.toggle('active', !isMuted);
+            muteBtn.innerHTML = isMuted ? '<span>🔇</span>' : '<span>🎤</span>';
+            showToast(isMuted ? 'Microphone muted' : 'Microphone unmuted');
+        }
+
+        // Toggle Video
+        function toggleVideo() {
+            if (localStream) {
+                const videoTracks = localStream.getVideoTracks();
+                videoTracks.forEach(track => {
+                    track.enabled = !isVideoEnabled;
+                });
+            }
+            
+            isVideoEnabled = !isVideoEnabled;
+            const videoBtn = document.getElementById('videoBtn');
+            const localVideoElement = document.getElementById('localVideoElement');
+            const localPlaceholder = document.getElementById('localPlaceholder');
+            
+            videoBtn.classList.toggle('active', isVideoEnabled);
+            videoBtn.innerHTML = isVideoEnabled ? '<span>📹</span>' : '<span>🚫</span>';
+            
+            if (isVideoEnabled) {
+                localVideoElement.style.display = 'block';
+                localPlaceholder.style.display = 'none';
+            } else {
+                localVideoElement.style.display = 'none';
+                localPlaceholder.style.display = 'flex';
+            }
+            
+            showToast(isVideoEnabled ? 'Video enabled' : 'Video disabled');
+        }
+
+        // Toggle Local Video Size
+        function toggleLocalVideo() {
+            const localVideo = document.getElementById('localVideo');
+            localVideo.classList.toggle('enlarged');
+        }
+
+        // Switch Camera
+        async function switchCamera() {
+            if (localStream) {
+                // In real app, this would switch between front/back cameras
+                showToast('Camera switched');
+            }
+        }
+
+        // Start Call Timer
+        function startCallTimer() {
+            callSeconds = 0;
+            callTimer = setInterval(() => {
+                callSeconds++;
+                const minutes = Math.floor(callSeconds / 60);
+                const seconds = callSeconds % 60;
+                document.getElementById('callTimer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // End Call
+        function endCall() {
+            // Stop timer
+            if (callTimer) {
+                clearInterval(callTimer);
+                callTimer = null;
+            }
+            
+            // Stop streams
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            
+            // Hide call interface
+            document.getElementById('callInterface').style.display = 'none';
+            
+            // Reset UI
+            document.getElementById('remotePlaceholder').style.display = 'flex';
+            document.getElementById('remoteVideoElement').style.display = 'none';
+            document.getElementById('localPlaceholder').style.display = 'flex';
+            document.getElementById('localVideoElement').style.display = 'none';
+            
+            // Reset buttons
+            document.getElementById('muteBtn').innerHTML = '<span>🎤</span>';
+            document.getElementById('videoBtn').innerHTML = '<span>📹</span>';
+            
+            isMuted = false;
+            isVideoEnabled = true;
+            
+            showToast('Call ended');
+        }
+
+        // Show Incoming Call
+        function showIncomingCall(userName, type) {
+            document.getElementById('incomingCallAvatar').textContent = userName.charAt(0);
+            document.getElementById('incomingCallName').textContent = userName;
+            document.getElementById('incomingCallType').textContent = 
+                type === 'video' ? 'Incoming video call' : 'Incoming audio call';
+            document.getElementById('incomingCall').style.display = 'flex';
+        }
+
+        // Accept Call
+        function acceptCall() {
+            document.getElementById('incomingCall').style.display = 'none';
+            startCall(onlineUsers[0].id, 'video');
+        }
+
+        // Decline Call
+        function declineCall() {
+            document.getElementById('incomingCall').style.display = 'none';
+            showToast('Call declined');
+        }
+
+        // Show All Users
+        function showAllUsers() {
+            showToast('All users feature coming soon!');
+        }
+
+        // Load Videos
+        function loadVideos() {
+            const videoGrid = document.getElementById('videoGrid');
+            videoGrid.innerHTML = '<div class="loading">Loading videos</div>';
+
+            // Filter videos
+            let filteredVideos = videos;
+
+            if (currentCategory !== 'all') {
+                filteredVideos = filteredVideos.filter(v => v.category === currentCategory);
+            }
+
+            if (searchTerm) {
+                filteredVideos = filteredVideos.filter(v => 
+                    v.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    v.channel.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+
+            setTimeout(() => {
+                displayVideos(filteredVideos);
+            }, 500);
+        }
+
+        // Display Videos
+        function displayVideos(videosToShow) {
+            const videoGrid = document.getElementById('videoGrid');
+            
+            if (videosToShow.length === 0) {
+                videoGrid.innerHTML = `
+                    <div class="empty-state">
+                        <span>🎬</span>
+                        <h3>No videos found</h3>
+                        <p>Try a different category or search term</p>
+                    </div>
+                `;
+                return;
+            }
+
+            videoGrid.innerHTML = videosToShow.map(video => `
+                <div class="video-card" onclick="playVideo('${video.id}')">
+                    <div class="video-thumbnail">
+                        <img src="${video.thumbnail}" 
+                             alt="${video.title}"
+                             onerror="this.src='https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg'">
+                        <span class="video-duration">${video.duration}</span>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-channel">${video.channel}</div>
+                        <div class="video-stats">
+                            <span>${video.views} views</span>
+                            <span>•</span>
+                            <span>${video.timestamp}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Play Video
+        function playVideo(videoId) {
+            const video = videos.find(v => v.id === videoId);
+            if (!video) return;
+
+            currentVideo = video;
+            
+            document.getElementById('playerVideoTitle').textContent = video.title;
+            document.getElementById('youtubeIframe').src = `https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0`;
+            
+            // Load likes
+            const videoLikes = likes[videoId] || 0;
+            document.getElementById('likeCount').textContent = videoLikes;
+            
+            // Check if user liked
+            const userLiked = likes[`${videoId}_${currentUser.id}`];
+            document.getElementById('likeBtn').classList.toggle('active', userLiked);
+            
+            // Load comments
+            loadComments(videoId);
+            
+            document.getElementById('playerPage').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Load Comments
+        function loadComments(videoId) {
+            const videoComments = comments[videoId] || [];
+            const commentList = document.getElementById('commentList');
+            document.getElementById('commentCount').textContent = videoComments.length;
+
+            if (videoComments.length === 0) {
+                commentList.innerHTML = '<div class="empty-state"><span>💬</span><p>No comments yet. Be the first!</p></div>';
+                return;
+            }
+
+            commentList.innerHTML = videoComments.map(comment => `
+                <div class="comment-item">
+                    <div class="comment-avatar">${comment.author.charAt(0).toUpperCase()}</div>
+                    <div class="comment-content">
+                        <div class="comment-author">${comment.author}</div>
+                        <div class="comment-text">${comment.text}</div>
+                        <div class="comment-time">${comment.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add Comment
+        function addComment() {
+            const commentText = document.getElementById('commentText').value;
+            if (!commentText || !currentVideo) return;
+
+            if (!comments[currentVideo.id]) {
+                comments[currentVideo.id] = [];
+            }
+
+            const newComment = {
+                id: 'c' + Date.now(),
+                text: commentText,
+                author: currentUser.name,
+                time: 'Just now'
+            };
+
+            comments[currentVideo.id].unshift(newComment);
+            localStorage.setItem('mytube_comments', JSON.stringify(comments));
+
+            document.getElementById('commentText').value = '';
+            loadComments(currentVideo.id);
+            showToast('Comment added!');
+        }
+
+        // Handle Enter key in comment
+        function handleCommentKeypress(e) {
+            if (e.key === 'Enter') {
+                addComment();
+            }
+        }
+
+        // Toggle Like
+        function toggleLike() {
+            if (!currentVideo) return;
+
+            const likeKey = `${currentVideo.id}_${currentUser.id}`;
+            const isLiked = likes[likeKey];
+
+            if (isLiked) {
+                delete likes[likeKey];
+                likes[currentVideo.id] = (likes[currentVideo.id] || 1) - 1;
+            } else {
+                likes[likeKey] = true;
+                likes[currentVideo.id] = (likes[currentVideo.id] || 0) + 1;
+            }
+
+            localStorage.setItem('mytube_likes', JSON.stringify(likes));
+
+            document.getElementById('likeCount').textContent = likes[currentVideo.id] || 0;
+            document.getElementById('likeBtn').classList.toggle('active', !isLiked);
+            
+            showToast(isLiked ? 'Like removed' : 'Video liked!');
+        }
+
+        // Upload Video
+        function uploadVideo() {
+            const title = document.getElementById('videoTitle').value.trim();
+            const url = document.getElementById('videoUrl').value.trim();
+            const channel = document.getElementById('videoChannel').value.trim();
+            const category = document.getElementById('videoCategory').value;
+
+            if (!title || !url || !channel) {
+                showToast('Please fill all fields');
+                return;
+            }
+
+            // Extract YouTube ID
+            const youtubeId = extractYoutubeId(url);
+            
+            if (!youtubeId) {
+                showToast('Invalid YouTube URL');
+                return;
+            }
+
+            const newVideo = {
+                id: Date.now().toString(),
+                title,
+                channel,
+                views: '0',
+                timestamp: 'Just now',
+                duration: '0:00',
+                category,
+                youtubeId,
+                thumbnail: `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`,
+                likes: 0
+            };
+
+            videos.unshift(newVideo);
+            localStorage.setItem('mytube_videos', JSON.stringify(videos));
+
+            hideUploadModal();
+            clearUploadForm();
+            loadVideos();
+            showToast('Video uploaded successfully!');
+        }
+
+        // Extract YouTube ID from URL
+        function extractYoutubeId(url) {
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=)([^&]+)/,
+                /(?:youtu\.be\/)([^?]+)/,
+                /(?:youtube\.com\/embed\/)([^?]+)/
+            ];
+
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) return match[1];
+            }
+            return null;
+        }
+
+        // Filter by Category
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            // Update active chip
+            document.querySelectorAll('.category-chip').forEach(chip => {
+                chip.classList.remove('active');
+                if (chip.textContent.toLowerCase() === category || 
+                    (category === 'all' && chip.textContent === 'All')) {
+                    chip.classList.add('active');
+                }
+            });
+            
+            loadVideos();
+        }
+
+        // Search Videos
+        function searchVideos() {
+            searchTerm = document.getElementById('searchInput').value;
+            loadVideos();
+        }
+
+        // Navigation
+        function navigateTo(page) {
+            // Update active nav
+            document.querySelectorAll('.nav-item').forEach((item, index) => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            switch(page) {
+                case 'home':
+                    filterCategory('all');
+                    break;
+                case 'calls':
+                    showToast('Call history feature coming soon!');
+                    break;
+                case 'shorts':
+                    showToast('Shorts feature coming soon!');
+                    break;
+                case 'library':
+                    showToast('Library feature coming soon!');
+                    break;
+            }
+        }
+
+        // Share Video
+        function shareVideo() {
+            if (!currentVideo) return;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: currentVideo.title,
+                    text: `Check out this video on MyTube: ${currentVideo.title}`,
+                    url: window.location.href
+                }).catch(() => {
+                    showToast('Share cancelled');
+                });
+            } else {
+                // Fallback
+                navigator.clipboard.writeText(currentVideo.title + ' - MyTube').then(() => {
+                    showToast('Link copied to clipboard!');
+                });
+            }
+        }
+
+        // Save Video
+        function saveVideo() {
+            showToast('Video saved to library!');
+        }
+
+        // Close Player
+        function closePlayer() {
+            document.getElementById('playerPage').style.display = 'none';
+            document.getElementById('youtubeIframe').src = '';
+            document.body.style.overflow = 'auto';
+            currentVideo = null;
+        }
+
+        // Modal Functions
+        function showUploadModal() {
+            document.getElementById('uploadModal').style.display = 'flex';
+        }
+
+        function hideUploadModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+        }
+
+        function clearUploadForm() {
+            document.getElementById('videoTitle').value = '';
+            document.getElementById('videoUrl').value = '';
+            document.getElementById('videoChannel').value = '';
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2000);
+        }
+
+        // Click outside modal to close
+        window.onclick = function(event) {
+            const modal = document.getElementById('uploadModal');
+            if (event.target === modal) {
+                hideUploadModal();
+            }
+        }
+
+        // Handle back button on Android
+        document.addEventListener('backbutton', function(e) {
+            if (document.getElementById('playerPage').style.display === 'block') {
+                e.preventDefault();
+                closePlayer();
+            } else if (document.getElementById('callInterface').style.display === 'flex') {
+                e.preventDefault();
+                endCall();
+            }
+        });
+
+        // Simulate incoming call every 30 seconds for demo
+        setInterval(() => {
+            if (!isInCall && Math.random() > 0.7) {
+                const randomUser = onlineUsers[Math.floor(Math.random() * onlineUsers.length)];
+                showIncomingCall(randomUser.name, Math.random() > 0.5 ? 'video' : 'audio');
+            }
+        }, 30000);
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initData();
+            loadVideos();
+            
+            // Set user avatar
+            document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+        });
+    </script>
+</body>
+</html>
